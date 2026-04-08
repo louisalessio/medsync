@@ -1,9 +1,11 @@
 package com.medsync.medsync.service;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.medsync.medsync.model.Patient;
 import com.medsync.medsync.repository.PatientRepository;
-import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 public class PatientService {
@@ -18,7 +20,7 @@ public class PatientService {
         return patientRepository.findAll();
     }
 
-    public Patient savePatient(Patient patient) {
+    public Patient createPatientFromDTO(Patient patient) {
         return patientRepository.save(patient);
     }
 }
