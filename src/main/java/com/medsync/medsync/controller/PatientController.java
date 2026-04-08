@@ -31,6 +31,6 @@ public class PatientController {
 
     @PostMapping
     public Patient createPatient(@Valid @RequestBody PatientDTO patientDTO) {
-        return patientService.createPatientFromDTO(patientDTO);
+        return patientService.saveFromDto(patientDTO);
     }
 }
