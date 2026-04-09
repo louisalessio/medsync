@@ -1,6 +1,7 @@
 package com.medsync.medsync.service;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
@@ -8,6 +9,8 @@ import com.medsync.medsync.dto.PatientDTO;
 import com.medsync.medsync.mapper.PatientMapper;
 import com.medsync.medsync.model.Patient;
 import com.medsync.medsync.repository.PatientRepository;
+
+import jakarta.annotation.Nonnull;
 
 @Service
 public class PatientService {
@@ -24,12 +27,12 @@ public class PatientService {
         return patientRepository.findAll();
     }
 
-    public Patient saveFromDto(PatientDTO dto) {
-        Patient patient = patientMapper.toEntity(dto);
+    public Patient saveFromDto(@Nonnull PatientDTO dto) {
+        @Nonnull Patient patient = Objects.requireNonNull(patientMapper.toEntity(dto), "Mapped patient entity cannot be null");
         return patientRepository.save(patient);
     }
 
-    public PatientDTO getPatientById(Long id) {
+    public PatientDTO getPatientById(@Nonnull long id) {
         Patient patient = patientRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Patient not found"));
         return patientMapper.toDto(patient);
