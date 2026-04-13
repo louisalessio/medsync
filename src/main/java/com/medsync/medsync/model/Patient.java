@@ -2,7 +2,6 @@ package com.medsync.medsync.model;
 
 import java.time.LocalDate;
 
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SoftDelete;
 
 import jakarta.persistence.Column;

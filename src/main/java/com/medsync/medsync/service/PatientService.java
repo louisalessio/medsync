@@ -53,4 +53,20 @@ public class PatientService {
         }
         patientRepository.deleteById(id);
     }
+
+    // update an existing patient
+    @Nonnull
+    public PatientDTO updatePatient(@Nonnull long id, @Nonnull PatientDTO dto) {
+        // fetch the patient (or throw error if not found)
+        Patient existingPatient = patientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Patient with ID " + id + " not found"));
+
+        // update the existing entity with DTO data
+        patientMapper.updateEntityFromDto(dto, existingPatient);
+
+        // save and return the updated DTO
+        Patient updatedPatient = patientRepository.save(existingPatient);
+
+        return patientMapper.toDto(updatedPatient);
+    }
 }

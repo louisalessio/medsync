@@ -30,4 +30,6 @@ public class PatientDTO {
     @NotBlank(message = "Social Security Number is mandatory")
     @Pattern(regexp = "^[A-Z0-9-]*$", message = "SSN must be alphanumeric")
     private String socialSecurityNumber;
+
+    private String gender;
 }
