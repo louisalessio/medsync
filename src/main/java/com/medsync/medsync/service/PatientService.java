@@ -28,13 +28,21 @@ public class PatientService {
     }
 
     public Patient saveFromDto(@Nonnull PatientDTO dto) {
-        @Nonnull Patient patient = Objects.requireNonNull(patientMapper.toEntity(dto), "Mapped patient entity cannot be null");
+        @Nonnull
+        Patient patient = Objects.requireNonNull(patientMapper.toEntity(dto), "Mapped patient entity cannot be null");
         return patientRepository.save(patient);
     }
 
     public PatientDTO getPatientById(@Nonnull long id) {
-        Patient patient = patientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Patient not found"));
-        return patientMapper.toDto(patient);
+        return patientRepository.findById(id)
+                .map(patientMapper::toDto)
+                .orElseThrow(() -> new RuntimeException("Patient with ID " + id + " not found"));
     }
+
+    public List<PatientDTO> searchByLastName(String lastName) {
+    return patientRepository.findByLastNameContainingIgnoreCase(lastName)
+            .stream()
+            .map(patientMapper::toDto)
+            .toList(); 
+}
 }
