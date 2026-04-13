@@ -2,6 +2,8 @@ package com.medsync.medsync.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +33,13 @@ public class PatientController {
     public List<PatientDTO> searchByLastName(@RequestParam String lastName) {
         // Qui dovrai aggiungere il metodo nel Service che chiama il Repository
         return patientService.searchByLastName(lastName);
+    }
+
+    // delete a patient (soft delete)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        patientService.deletePatient(id);
+        return ResponseEntity.noContent().build(); // returns 204 No Content
     }
 
     public PatientController(PatientService patientService) {

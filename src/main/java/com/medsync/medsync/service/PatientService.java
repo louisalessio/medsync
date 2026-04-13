@@ -40,9 +40,17 @@ public class PatientService {
     }
 
     public List<PatientDTO> searchByLastName(String lastName) {
-    return patientRepository.findByLastNameContainingIgnoreCase(lastName)
-            .stream()
-            .map(patientMapper::toDto)
-            .toList(); 
-}
+        return patientRepository.findByLastNameContainingIgnoreCase(lastName)
+                .stream()
+                .map(patientMapper::toDto)
+                .toList();
+    }
+
+    // mark the patient as deleted
+    public void deletePatient(@Nonnull long id) {
+        if (!patientRepository.existsById(id)) {
+            throw new RuntimeException("Patient with ID " + id + " not found");
+        }
+        patientRepository.deleteById(id);
+    }
 }
