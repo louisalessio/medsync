@@ -13,7 +13,7 @@ import lombok.Data;
 public class PatientDTO {
 
     private Long id;
-    
+
     @NotBlank(message = "First name is mandatory")
     @Size(min = 2, max = 50, message = "First name must be between 2 and 50 characters")
     private String firstName;
@@ -24,7 +24,8 @@ public class PatientDTO {
     @Past(message = "Birth date must be in the past")
     private LocalDate birthDate;
 
-    @Email(message = "Email should be valid")
+    @Email(message = "Invalid email format")
+    @NotBlank(message = "Email is required")
     private String email;
 
     @NotBlank(message = "Social Security Number is mandatory")
@@ -32,4 +33,7 @@ public class PatientDTO {
     private String socialSecurityNumber;
 
     private String gender;
+
+    @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid international phone number format")
+    private String phoneNumber;
 }

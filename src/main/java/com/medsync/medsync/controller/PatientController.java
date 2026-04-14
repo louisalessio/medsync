@@ -32,7 +32,6 @@ public class PatientController {
 
     @GetMapping("/search")
     public List<PatientDTO> searchByLastName(@RequestParam String lastName) {
-        // Qui dovrai aggiungere il metodo nel Service che chiama il Repository
         return patientService.searchByLastName(lastName);
     }
 
