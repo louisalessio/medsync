@@ -53,8 +53,8 @@ public class PatientController {
     }
 
     @PostMapping
-    public Patient createPatient(@Valid @RequestBody PatientDTO patientDTO) {
-        return patientService.saveFromDto(patientDTO);
+    public PatientDTO createPatient(@Valid @RequestBody PatientDTO patientDTO) {
+        return patientService.createPatient(patientDTO);
     }
 
     //update a patient: PUT /api/patients/1

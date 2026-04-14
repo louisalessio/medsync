@@ -1,7 +1,6 @@
 package com.medsync.medsync.service;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
@@ -11,8 +10,10 @@ import com.medsync.medsync.model.Patient;
 import com.medsync.medsync.repository.PatientRepository;
 
 import jakarta.annotation.Nonnull;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class PatientService {
 
     private final PatientRepository patientRepository;
@@ -27,16 +28,27 @@ public class PatientService {
         return patientRepository.findAll();
     }
 
-    public Patient saveFromDto(@Nonnull PatientDTO dto) {
-        @Nonnull
-        Patient patient = Objects.requireNonNull(patientMapper.toEntity(dto), "Mapped patient entity cannot be null");
-        return patientRepository.save(patient);
+    @Nonnull
+    @SuppressWarnings("null")
+    public PatientDTO createPatient(@Nonnull PatientDTO dto) {
+        log.info("Attempting to create a new patient with email: {}", dto.getEmail());
+        if (patientRepository.existsByEmail(dto.getEmail())) {
+            log.error("Creazione fallita: l'email {} è già presente", dto.getEmail());
+            throw new RuntimeException("Email già in uso!");
+        }
+        Patient patient = patientMapper.toEntity(dto);
+        Patient savedPatient = patientRepository.save(patient);
+        log.info("Patient successfully created with ID: {}", savedPatient.getId());
+        return patientMapper.toDto(savedPatient);
     }
 
     public PatientDTO getPatientById(@Nonnull long id) {
         return patientRepository.findById(id)
                 .map(patientMapper::toDto)
-                .orElseThrow(() -> new RuntimeException("Patient with ID " + id + " not found"));
+                .orElseThrow(() -> {
+                    log.warn("Search failed: Patient with ID {} not found", id);
+                    return new RuntimeException("Patient not found");
+                });
     }
 
     public List<PatientDTO> searchByLastName(String lastName) {
@@ -48,15 +60,19 @@ public class PatientService {
 
     // mark the patient as deleted
     public void deletePatient(@Nonnull long id) {
+        log.warn("Soft-deleting patient with ID: {}", id);
         if (!patientRepository.existsById(id)) {
+            log.error("Delete failed: Patient {} not found", id);
             throw new RuntimeException("Patient with ID " + id + " not found");
         }
         patientRepository.deleteById(id);
     }
 
     // update an existing patient
+    @SuppressWarnings("null")
     @Nonnull
     public PatientDTO updatePatient(@Nonnull long id, @Nonnull PatientDTO dto) {
+        log.info("Updating patient with ID: {}", id);
         // fetch the patient (or throw error if not found)
         Patient existingPatient = patientRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Patient with ID " + id + " not found"));
@@ -67,6 +83,7 @@ public class PatientService {
         // save and return the updated DTO
         Patient updatedPatient = patientRepository.save(existingPatient);
 
+        log.info("Patient with ID: {} successfully updated", id);
         return patientMapper.toDto(updatedPatient);
     }
 }
