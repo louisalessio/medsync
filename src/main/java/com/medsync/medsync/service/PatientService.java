@@ -33,8 +33,8 @@ public class PatientService {
     public PatientDTO createPatient(@Nonnull PatientDTO dto) {
         log.info("Attempting to create a new patient with email: {}", dto.getEmail());
         if (patientRepository.existsByEmail(dto.getEmail())) {
-            log.error("Creazione fallita: l'email {} è già presente", dto.getEmail());
-            throw new RuntimeException("Email già in uso!");
+            log.error("Validation failed: Email {} is already in use", dto.getEmail());
+            throw new RuntimeException("A patient with this email already exists");
         }
         Patient patient = patientMapper.toEntity(dto);
         Patient savedPatient = patientRepository.save(patient);
