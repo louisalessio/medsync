@@ -1,15 +1,14 @@
-package com.medsync.medsync;
+package com.medsync.medsync.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.assertj.core.api.Assertions.*;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +22,6 @@ import com.medsync.medsync.dto.PatientDTO;
 import com.medsync.medsync.mapper.PatientMapper;
 import com.medsync.medsync.model.Patient;
 import com.medsync.medsync.repository.PatientRepository;
-import com.medsync.medsync.service.PatientService;
 
 @ExtendWith(MockitoExtension.class)
 class PatientServiceTest {
@@ -62,7 +60,6 @@ class PatientServiceTest {
 
     @Test
     @DisplayName("Should save patient when email is unique")
-    @SuppressWarnings("null")
     void createPatient_Success() {
         // GIVEN
         PatientDTO dto = new PatientDTO();
@@ -74,7 +71,7 @@ class PatientServiceTest {
         // Stubbing
         when(patientRepository.existsByEmail(dto.getEmail())).thenReturn(false);
         when(patientMapper.toEntity(dto)).thenReturn(entity);
-        when(patientRepository.save(any(Patient.class))).thenReturn(entity);
+        when(patientRepository.save(Objects.requireNonNull(any(Patient.class)))).thenReturn(entity);
         when(patientMapper.toDto(entity)).thenReturn(dto);
 
         // WHEN
@@ -82,11 +79,10 @@ class PatientServiceTest {
 
         // THEN
         assertThat(result).isNotNull();
-        verify(patientRepository).save(any(Patient.class)); 
+        verify(patientRepository).save(Objects.requireNonNull(any(Patient.class))); 
     }
 
     @Test
-    @SuppressWarnings("null")
     void createPatient_Fail_DuplicateEmail() {
         // GIVEN
         PatientDTO dto = new PatientDTO();
@@ -103,6 +99,6 @@ class PatientServiceTest {
         assertThat(exception.getMessage()).contains("already exists");
 
         // verify that save was never called
-        verify(patientRepository, never()).save(any(Patient.class));
+        verify(patientRepository, never()).save(Objects.requireNonNull(any(Patient.class)));
     }
 }

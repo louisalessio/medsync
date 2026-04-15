@@ -1,6 +1,7 @@
 package com.medsync.medsync.service;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,6 @@ public class PatientService {
     }
 
     @Nonnull
-    @SuppressWarnings("null")
     public PatientDTO createPatient(@Nonnull PatientDTO dto) {
         log.info("Attempting to create a new patient with email: {}", dto.getEmail());
         if (patientRepository.existsByEmail(dto.getEmail())) {
@@ -37,7 +37,7 @@ public class PatientService {
             throw new RuntimeException("A patient with this email already exists");
         }
         Patient patient = patientMapper.toEntity(dto);
-        Patient savedPatient = patientRepository.save(patient);
+        Patient savedPatient = patientRepository.save(Objects.requireNonNull(patient));
         log.info("Patient successfully created with ID: {}", savedPatient.getId());
         return patientMapper.toDto(savedPatient);
     }
@@ -69,7 +69,6 @@ public class PatientService {
     }
 
     // update an existing patient
-    @SuppressWarnings("null")
     @Nonnull
     public PatientDTO updatePatient(@Nonnull long id, @Nonnull PatientDTO dto) {
         log.info("Updating patient with ID: {}", id);
@@ -81,7 +80,7 @@ public class PatientService {
         patientMapper.updateEntityFromDto(dto, existingPatient);
 
         // save and return the updated DTO
-        Patient updatedPatient = patientRepository.save(existingPatient);
+        Patient updatedPatient = patientRepository.save(Objects.requireNonNull(existingPatient));
 
         log.info("Patient with ID: {} successfully updated", id);
         return patientMapper.toDto(updatedPatient);
